@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8A011A8121F2B14F001D2FEC /* hz_splay_tree.c in Sources */ = {isa = PBXBuildFile; fileRef = 8A011A8021F2B14F001D2FEC /* hz_splay_tree.c */; };
+		8A011A8421F2B165001D2FEC /* hz_stack_table.c in Sources */ = {isa = PBXBuildFile; fileRef = 8A011A8321F2B165001D2FEC /* hz_stack_table.c */; };
 		8AA7B8D121F2A356002967FB /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AA7B8D021F2A356002967FB /* AppDelegate.m */; };
 		8AA7B8D421F2A356002967FB /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AA7B8D321F2A356002967FB /* ViewController.m */; };
 		8AA7B8D721F2A356002967FB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8AA7B8D521F2A356002967FB /* Main.storyboard */; };
@@ -16,6 +18,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8A011A7F21F2B14F001D2FEC /* hz_splay_tree.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = hz_splay_tree.h; sourceTree = "<group>"; };
+		8A011A8021F2B14F001D2FEC /* hz_splay_tree.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = hz_splay_tree.c; sourceTree = "<group>"; };
+		8A011A8221F2B165001D2FEC /* hz_stack_table.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = hz_stack_table.h; sourceTree = "<group>"; };
+		8A011A8321F2B165001D2FEC /* hz_stack_table.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = hz_stack_table.c; sourceTree = "<group>"; };
 		8AA7B8CC21F2A355002967FB /* HZAlgorithmKit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HZAlgorithmKit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8AA7B8CF21F2A355002967FB /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		8AA7B8D021F2A356002967FB /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -39,6 +45,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8A011A7E21F2AF62001D2FEC /* Kit */ = {
+			isa = PBXGroup;
+			children = (
+				8A011A7F21F2B14F001D2FEC /* hz_splay_tree.h */,
+				8A011A8021F2B14F001D2FEC /* hz_splay_tree.c */,
+				8A011A8221F2B165001D2FEC /* hz_stack_table.h */,
+				8A011A8321F2B165001D2FEC /* hz_stack_table.c */,
+			);
+			path = Kit;
+			sourceTree = "<group>";
+		};
 		8AA7B8C321F2A355002967FB = {
 			isa = PBXGroup;
 			children = (
@@ -58,6 +75,7 @@
 		8AA7B8CE21F2A355002967FB /* HZAlgorithmKit */ = {
 			isa = PBXGroup;
 			children = (
+				8A011A7E21F2AF62001D2FEC /* Kit */,
 				8AA7B8CF21F2A355002967FB /* AppDelegate.h */,
 				8AA7B8D021F2A356002967FB /* AppDelegate.m */,
 				8AA7B8D221F2A356002967FB /* ViewController.h */,
@@ -142,8 +160,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				8AA7B8D421F2A356002967FB /* ViewController.m in Sources */,
+				8A011A8121F2B14F001D2FEC /* hz_splay_tree.c in Sources */,
 				8AA7B8DF21F2A357002967FB /* main.m in Sources */,
 				8AA7B8D121F2A356002967FB /* AppDelegate.m in Sources */,
+				8A011A8421F2B165001D2FEC /* hz_stack_table.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -7,6 +7,9 @@
 //
 
 #import "ViewController.h"
+#import "hz_splay_tree.h"
+#import "hz_stack_table.h"
+
 
 @interface ViewController ()
 
@@ -16,7 +19,11 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
+    
+    //hz_splay_tree_test();
+    
+    hz_stack_table_test();
+    
 }
 
 
