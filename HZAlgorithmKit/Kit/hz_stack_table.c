@@ -14,7 +14,6 @@
 #include <mach-o/dyld.h>
 #include <dlfcn.h>
 #include <sys/sysctl.h>
-#include <execinfo.h>
 
 #define _ARRAY_INIT_LEN 1024*1024*2
 
@@ -46,6 +45,12 @@ void hz_stack_table_destroy(hz_stack_table* p) {
 int hz_stack_table_insert(hz_stack_table* p, void** addrlist, int cnt) {
     if(!addrlist) return -1;
     if(cnt <= 0) return -1;
+    
+    static uintptr_t imageAddress = 0;
+    if(imageAddress == 0) {
+        const struct mach_header* header = _dyld_get_image_header(0);
+        imageAddress = (uintptr_t)header;
+    }
 
     int lastParent = -1;
     uintptr_t hashLastAddr = 0;
@@ -53,12 +58,6 @@ int hz_stack_table_insert(hz_stack_table* p, void** addrlist, int cnt) {
     for(int i = cnt-1; i >= 0; i--) {
         
         void* addr = addrlist[i];
-
-        static uintptr_t imageAddress = 0;
-        if(imageAddress == 0) {
-            const struct mach_header* header = _dyld_get_image_header(0);
-            imageAddress = (uintptr_t)header;
-        }
         
         uintptr_t hashAddr = (uintptr_t)(addr) - imageAddress;
         
@@ -122,34 +121,3 @@ int hz_stack_table_get(hz_stack_table* p, int stackindex, void** addrlist, int* 
     *cnt = i;
     return i;
 }
-
-#ifdef DEBUG
-void hz_stack_table_test() {
-    hz_stack_table* p = hz_stack_table_create();
-    
-    void* buf[64] = {0};
-    int stackNum = backtrace((void**)buf, 64);
-    
-    int i;
-    
-    printf("stack(count=%d):\n", stackNum);
-    for(i = 0; i < stackNum; i++) {
-        printf("[%d]0x%lx\n", i, (uintptr_t)buf[i]);
-    }
-    
-    int index = hz_stack_table_insert(p, buf, stackNum);
-    
-    void* buf2[64] = {0};
-    int cnt = 64;
-    hz_stack_table_get(p, index, buf2, &cnt);
-
-    printf("stack2(count=%d):\n", cnt);
-    for(i = 0; i < cnt; i++) {
-        printf("[%d]0x%lx\n", i, (uintptr_t)buf2[i]);
-    }
-    
-    hz_stack_table_destroy(p);
-    p = 0;
-}
-#endif
-

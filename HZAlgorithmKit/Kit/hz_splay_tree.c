@@ -12,23 +12,24 @@
 #include <time.h>
 #include <string.h>
 
-#define _ARRAY_INIT_LEN 1024*256
-#define _ARRAY_INC_LEN  1024*64
-
-hz_splay_tree* hz_splay_tree_create() {
+hz_splay_tree* hz_splay_tree_create(int initLen, int incLen, int nodeSize, hz_splay_node_compare_func_type compareFunc) {
     hz_splay_tree* p = calloc(1, sizeof(hz_splay_tree));
     if(!p) {
         return 0;
     }
-    p->array = calloc(_ARRAY_INIT_LEN, sizeof(hz_splay_node));
+    p->array = calloc(initLen, nodeSize);
     if(!p->array) {
         free(p);
         return 0;
     }
-    p->array_len = _ARRAY_INIT_LEN;
+    p->array_init_len = initLen;
+    p->array_inc_len = incLen;
+    p->array_len = initLen;
     p->array_free_index = 0;
     p->root_index = -1;
-    p->count = 0;
+    p->node_size = nodeSize;
+    p->node_count = 0;
+    p->compareFunc = compareFunc;
     
     return p;
 }
@@ -42,8 +43,10 @@ void hz_splay_tree_destroy(hz_splay_tree* p) {
     }
 }
 
+#define _NODE_INDEX(arr,pos) (void*)(((char*)(arr))+nodeSize*(pos))
+
 // Simple top down splay, not requiring item to be in the tree tindex.
-int hz_splay_tree_splay(hz_splay_tree* p, uintptr_t it, int tindex ) {
+int hz_splay_tree_splay(hz_splay_tree* p, hz_splay_node* it, int tindex ) {
     if(!p) return -1;
     if(!p->array) return -1;
     if (tindex == -1) return -1;
@@ -53,15 +56,19 @@ int hz_splay_tree_splay(hz_splay_tree* p, uintptr_t it, int tindex ) {
     l = r = &N;
     int yindex;
     
+    int nodeSize = p->node_size;
+    hz_splay_node_compare_func_type compareFunc = p->compareFunc;
+    
     hz_splay_node* arr = p->array;
-    hz_splay_node* t = arr + tindex;
+    hz_splay_node* t = _NODE_INDEX(arr, tindex);
     
     for (;;) {
-        if (it < t->item) {
+        int compareRes = compareFunc(it, t);
+        if (compareRes > 0) {
             if (t->left == -1) break;
             yindex = t->left;
-            y = arr + yindex;
-            if (it < y->item) { // rotate right
+            y = _NODE_INDEX(arr, yindex);
+            if (compareFunc(it, y) > 0) { // rotate right
                 t->left = y->right;
                 y->right = tindex;
                 tindex = yindex;
@@ -71,12 +78,12 @@ int hz_splay_tree_splay(hz_splay_tree* p, uintptr_t it, int tindex ) {
             r->left = tindex; // link right
             r = t;
             tindex = t->left;
-            t = arr + tindex;
-        } else if (it > t->item) {
+            t = _NODE_INDEX(arr, tindex);
+        } else if (compareRes < 0) {
             if (t->right == -1) break;
             yindex = t->right;
-            y = arr + yindex;
-            if (it > y->item) { // rotate left
+            y = _NODE_INDEX(arr, yindex);
+            if (compareFunc(it, y) < 0) { // rotate left
                 t->right = y->left;
                 y->left = tindex;
                 tindex = yindex;
@@ -86,7 +93,7 @@ int hz_splay_tree_splay(hz_splay_tree* p, uintptr_t it, int tindex ) {
             l->right = tindex; // link left
             l = t;
             tindex = t->right;
-            t = arr + tindex;
+            t = _NODE_INDEX(arr, tindex);
         } else {
             break;
         }
@@ -98,17 +105,21 @@ int hz_splay_tree_splay(hz_splay_tree* p, uintptr_t it, int tindex ) {
     return tindex;
 }
 
-int hz_splay_tree_insert(hz_splay_tree* p, uintptr_t it) {
+int hz_splay_tree_insert(hz_splay_tree* p, hz_splay_node* it, int* pIsInserted) {
     if(!p) return -1;
     if(!p->array) return -1;
     
-    if(p->count == p->array_len) {
-        int newlen = p->array_len + _ARRAY_INC_LEN;
-        hz_splay_node* newarray = realloc(p->array, sizeof(hz_splay_node) * newlen);
+    *pIsInserted = 0;
+    
+    int nodeSize = p->node_size;
+    
+    if(p->node_count == p->array_len) {
+        int newlen = p->array_len + p->array_inc_len;
+        hz_splay_node* newarray = realloc(p->array, nodeSize * newlen);
         if(!newarray) {
             return -1;
         }
-        memset(newarray+p->array_len, 0, sizeof(hz_splay_node) * _ARRAY_INC_LEN);
+        memset(newarray+p->array_len, 0, nodeSize * p->array_inc_len);
         p->array = newarray;
         p->array_len = newlen;
     }
@@ -116,7 +127,7 @@ int hz_splay_tree_insert(hz_splay_tree* p, uintptr_t it) {
     hz_splay_node* arr = p->array;
     
     int newindex = p->array_free_index;
-    hz_splay_node* ne = arr + newindex;
+    hz_splay_node* ne = _NODE_INDEX(arr, newindex);
     if(ne->left > 0) {
         p->array_free_index = ne->left - 1;
     } else {
@@ -125,34 +136,39 @@ int hz_splay_tree_insert(hz_splay_tree* p, uintptr_t it) {
 
     ne->left = -1;
     ne->right = -1;
-    ne->item = it;
     
     int tindex = p->root_index;
     if(tindex == -1) {
-        p->count = 1;
+        p->node_count = 1;
         p->root_index = newindex;
+        *pIsInserted = 1;
         return newindex;
     }
     
     tindex = hz_splay_tree_splay(p, it, tindex);
     p->root_index = tindex;
     
-    hz_splay_node* t = arr + tindex;
-    if (it < t->item) {
+    hz_splay_node_compare_func_type compareFunc = p->compareFunc;
+    
+    hz_splay_node* t = _NODE_INDEX(arr, tindex);
+    int compareRes = compareFunc(it, t);
+    if (compareRes > 0) {
         ne->left = t->left;
         ne->right = tindex;
         t->left = -1;
         
-        p->count++;
+        p->node_count++;
         p->root_index = newindex;
+        *pIsInserted = 1;
         return newindex;
-    } else if (it > t->item) {
+    } else if (compareRes < 0) {
         ne->right = t->right;
         ne->left = tindex;
         t->right = -1;
         
-        p->count++;
+        p->node_count++;
         p->root_index = newindex;
+        *pIsInserted = 1;
         return newindex;
     } else { // We get here if it's already in the tree, Don't add it again.
         ne->left = p->array_free_index + 1;
@@ -164,7 +180,7 @@ int hz_splay_tree_insert(hz_splay_tree* p, uintptr_t it) {
 }
 
 // Deletes i from the tree if it's there, Return a pointer to the resulting tree.
-int hz_splay_tree_delete(hz_splay_tree* p, uintptr_t it) {
+int hz_splay_tree_delete(hz_splay_tree* p, hz_splay_node* it) {
     if(!p) return -1;
     if(!p->array) return -1;
     
@@ -176,17 +192,21 @@ int hz_splay_tree_delete(hz_splay_tree* p, uintptr_t it) {
     tindex = hz_splay_tree_splay(p, it, tindex);
     p->root_index = tindex;
     
-    hz_splay_node* arr = p->array;
-    hz_splay_node* t = arr + tindex;
+    int nodeSize = p->node_size;
+    hz_splay_node_compare_func_type compareFunc = p->compareFunc;
     
-    if (it == t->item) {
+    hz_splay_node* arr = p->array;
+    hz_splay_node* t = _NODE_INDEX(arr, tindex);
+    
+    if (compareFunc(it, t) == 0) {
         if (t->left == -1) {
             x = t->right;
         } else {
             x = hz_splay_tree_splay(p, it, t->left);
-            arr[x].right = t->right;
+            hz_splay_node* xn = _NODE_INDEX(arr, x);
+            xn->right = t->right;
         }
-        p->count--;
+        p->node_count--;
         
         t->left = p->array_free_index + 1; // index 1 2 3...
         p->array_free_index = tindex;
@@ -202,84 +222,37 @@ hz_splay_node* hz_splay_tree_get(hz_splay_tree* p, int index) {
     if(!p->array) return 0;
     if(index < 0 || index >= p->array_len) return 0;
     
-    return &p->array[index];
+    int nodeSize = p->node_size;
+    
+    return _NODE_INDEX(p->array, index);
 }
 
-void hz_splay_tree_print_inner(hz_splay_tree* p, int tindex) {
+void hz_splay_tree_traverse_in(hz_splay_tree* p, hz_splay_node_visit_func_type visitFunc, int tindex) {
     if(!p) return;
     if(!p->array) return;
     if(tindex == -1) return;
     
+    int nodeSize = p->node_size;
+    
     hz_splay_node* arr = p->array;
-    hz_splay_node* t = arr + tindex;
+    hz_splay_node* t = _NODE_INDEX(arr, tindex);
     int l = t->left;
     int r = t->right;
     
-    ++p->print_current_dept;
+    ++p->current_traverse_dept;
+    hz_splay_tree_traverse_in(p, visitFunc, l);
     
-    hz_splay_tree_print_inner(p, l);
+    visitFunc(p, t, p->current_traverse_dept);
     
-    if(p->print_array_count == p->print_array_len) {
-        int newlen = p->print_array_len + _ARRAY_INC_LEN;
-        hz_splay_print_node* newarray = realloc(p->print_array, sizeof(hz_splay_print_node) * newlen);
-        if(!newarray) return;
-        p->print_array = newarray;
-        p->print_array_len = newlen;
-    }
-    
-    p->print_array[p->print_array_count].item = t->item;
-    p->print_array[p->print_array_count++].dept = p->print_current_dept;
-    
-    hz_splay_tree_print_inner(p, r);
-    
-    --p->print_current_dept;
+    hz_splay_tree_traverse_in(p, visitFunc, r);
+    --p->current_traverse_dept;
 }
 
-void hz_splay_tree_print(hz_splay_tree* p) {
+void hz_splay_tree_traverse(hz_splay_tree* p, hz_splay_node_visit_func_type visitFunc) {
     if(!p) return;
     if(!p->array) return;
-    
-    p->print_array = calloc(_ARRAY_INIT_LEN, sizeof(hz_splay_print_node));
-    if(!p->print_array) return;
-    
-    p->print_array_len = _ARRAY_INIT_LEN;
-    p->print_array_count = 0;
-    p->print_current_dept = 0;
-    
-    hz_splay_tree_print_inner(p, p->root_index);
-    
-    printf("splay tree(%p,count=%d):\n", p, p->count);
-    for(int i = 0; i < p->print_array_count; i++) {
-        printf("[%d]%ld(%d)\n", i, (long)p->print_array[i].item, p->print_array[i].dept);
-        if(i < p->print_array_count-1 && p->print_array[i].item >= p->print_array[i+1].item) {
-            printf("error - [%d]%ld(%d) >= [%d]%ld(%d)\n",
-                   i, (long)p->print_array[i].item, p->print_array[i].dept,
-                   i+1, (long)p->print_array[i+1].item, p->print_array[i+1].dept);
-        }
-    }
-    
-    free(p->print_array);
-    p->print_array_len = 0;
-    p->print_array_count = 0;
-    p->print_current_dept = 0;
-}
 
-#ifdef DEBUG
-void hz_splay_tree_test() {
-    hz_splay_tree* p = hz_splay_tree_create();
-    
-    int i;
-    for(i = 0; i < 100000; i++) {
-        hz_splay_tree_insert(p, rand()%100000);
-    }
-    hz_splay_tree_print(p);
-    
-    for(i = 0; i < 100000; i++) {
-        hz_splay_tree_delete(p, rand()%100000);
-    }
-    hz_splay_tree_print(p);
-    
-    hz_splay_tree_destroy(p);
-    p = 0;
+    p->current_traverse_dept = 0;
+    hz_splay_tree_traverse_in(p, visitFunc, p->root_index);
+    p->current_traverse_dept = 0;
 }
-#endif

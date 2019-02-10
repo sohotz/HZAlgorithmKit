@@ -37,10 +37,6 @@ extern "C" {
     void hz_stack_table_destroy(hz_stack_table* p);
     int hz_stack_table_insert(hz_stack_table* p, void** addrlist, int cnt);
     int hz_stack_table_get(hz_stack_table* p, int stackindex, void** addrlist, int* cnt);
-
-#ifdef DEBUG
-    void hz_stack_table_test(void);
-#endif
     
 #ifdef __cplusplus
 }

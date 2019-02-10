@@ -16,6 +16,7 @@
 		8AA7B8DC21F2A357002967FB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8AA7B8DA21F2A357002967FB /* LaunchScreen.storyboard */; };
 		8AA7B8DF21F2A357002967FB /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AA7B8DE21F2A357002967FB /* main.m */; };
 		8AEA65B2220F04ED000D3CC4 /* hz_top_heap.c in Sources */ = {isa = PBXBuildFile; fileRef = 8AEA65B1220F04ED000D3CC4 /* hz_top_heap.c */; };
+		8AEA65B622103017000D3CC4 /* hz_test.c in Sources */ = {isa = PBXBuildFile; fileRef = 8AEA65B522103017000D3CC4 /* hz_test.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,6 +36,8 @@
 		8AA7B8DE21F2A357002967FB /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		8AEA65B0220F04ED000D3CC4 /* hz_top_heap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = hz_top_heap.h; sourceTree = "<group>"; };
 		8AEA65B1220F04ED000D3CC4 /* hz_top_heap.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = hz_top_heap.c; sourceTree = "<group>"; };
+		8AEA65B422103017000D3CC4 /* hz_test.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = hz_test.h; sourceTree = "<group>"; };
+		8AEA65B522103017000D3CC4 /* hz_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = hz_test.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +84,7 @@
 			isa = PBXGroup;
 			children = (
 				8A011A7E21F2AF62001D2FEC /* Kit */,
+				8AEA65B322102FF6000D3CC4 /* KitTest */,
 				8AA7B8CF21F2A355002967FB /* AppDelegate.h */,
 				8AA7B8D021F2A356002967FB /* AppDelegate.m */,
 				8AA7B8D221F2A356002967FB /* ViewController.h */,
@@ -92,6 +96,15 @@
 				8AA7B8DE21F2A357002967FB /* main.m */,
 			);
 			path = HZAlgorithmKit;
+			sourceTree = "<group>";
+		};
+		8AEA65B322102FF6000D3CC4 /* KitTest */ = {
+			isa = PBXGroup;
+			children = (
+				8AEA65B422103017000D3CC4 /* hz_test.h */,
+				8AEA65B522103017000D3CC4 /* hz_test.c */,
+			);
+			path = KitTest;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -165,6 +178,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8AA7B8D421F2A356002967FB /* ViewController.m in Sources */,
+				8AEA65B622103017000D3CC4 /* hz_test.c in Sources */,
 				8AEA65B2220F04ED000D3CC4 /* hz_top_heap.c in Sources */,
 				8A011A8121F2B14F001D2FEC /* hz_splay_tree.c in Sources */,
 				8AA7B8DF21F2A357002967FB /* main.m in Sources */,
