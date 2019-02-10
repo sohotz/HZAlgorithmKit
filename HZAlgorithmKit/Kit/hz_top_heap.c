@@ -3,7 +3,7 @@
 //  HZAlgorithmKit
 //
 //  Created by hot on 9/2/19.
-//  Copyright © 2019年 hot. All rights reserved.
+//  Copyright © 2019 hot. All rights reserved.
 //
 
 #include "hz_top_heap.h"

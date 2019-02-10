@@ -3,7 +3,7 @@
 //  HZAlgorithmKit
 //
 //  Created by hot on 19/1/19.
-//  Copyright © 2019年 hot. All rights reserved.
+//  Copyright © 2019 hot. All rights reserved.
 //
 
 #ifndef hz_stack_table_h
