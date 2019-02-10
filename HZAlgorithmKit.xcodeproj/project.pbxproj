@@ -15,6 +15,7 @@
 		8AA7B8D921F2A357002967FB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8AA7B8D821F2A357002967FB /* Assets.xcassets */; };
 		8AA7B8DC21F2A357002967FB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8AA7B8DA21F2A357002967FB /* LaunchScreen.storyboard */; };
 		8AA7B8DF21F2A357002967FB /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8AA7B8DE21F2A357002967FB /* main.m */; };
+		8AEA65B2220F04ED000D3CC4 /* hz_top_heap.c in Sources */ = {isa = PBXBuildFile; fileRef = 8AEA65B1220F04ED000D3CC4 /* hz_top_heap.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +33,8 @@
 		8AA7B8DB21F2A357002967FB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8AA7B8DD21F2A357002967FB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8AA7B8DE21F2A357002967FB /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		8AEA65B0220F04ED000D3CC4 /* hz_top_heap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = hz_top_heap.h; sourceTree = "<group>"; };
+		8AEA65B1220F04ED000D3CC4 /* hz_top_heap.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = hz_top_heap.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,6 +55,8 @@
 				8A011A8021F2B14F001D2FEC /* hz_splay_tree.c */,
 				8A011A8221F2B165001D2FEC /* hz_stack_table.h */,
 				8A011A8321F2B165001D2FEC /* hz_stack_table.c */,
+				8AEA65B0220F04ED000D3CC4 /* hz_top_heap.h */,
+				8AEA65B1220F04ED000D3CC4 /* hz_top_heap.c */,
 			);
 			path = Kit;
 			sourceTree = "<group>";
@@ -160,6 +165,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8AA7B8D421F2A356002967FB /* ViewController.m in Sources */,
+				8AEA65B2220F04ED000D3CC4 /* hz_top_heap.c in Sources */,
 				8A011A8121F2B14F001D2FEC /* hz_splay_tree.c in Sources */,
 				8AA7B8DF21F2A357002967FB /* main.m in Sources */,
 				8AA7B8D121F2A356002967FB /* AppDelegate.m in Sources */,

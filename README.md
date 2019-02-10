@@ -1,6 +1,7 @@
 ## HZAlgorithmKit
 
 ```
-hz_splay_tree.h  // 记录内存地址
-hz_stack_table.h // 记录调用堆栈
+hz_splay_tree.h  // store the living memory addresses in memory 
+hz_stack_table.h // store the call stacks in memory
+hz_top_heap.h    // store the maximum top N data in memory
 ```
